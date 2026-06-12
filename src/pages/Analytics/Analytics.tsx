@@ -7,9 +7,9 @@ import {
   selectMonthTotal,
   selectMonthExpenses,
 } from '../../store/slices/expensesSlice';
-import SpendingBarChart from '../charts/SpendingBarChart';
-import CategoryPieChart from '../charts/CategoryPieChart';
-import MonthlyLineChart from '../charts/MonthlyLineChart';
+import SpendingBarChart from '../../components/charts/SpendingBarChart';
+import CategoryPieChart from '../../components/charts/CategoryPieChart';
+import MonthlyLineChart from '../../components/charts/MonthlyLineChart';
 import { CATEGORY_COLORS, CATEGORY_ICONS } from '../../types';
 import { formatCurrency } from '../../utils';
 import {

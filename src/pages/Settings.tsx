@@ -1,17 +1,20 @@
 // src/components/dashboard/Settings.tsx
 import React from 'react';
 import { Sun, Moon, Trash2, Download, RefreshCw, User } from 'lucide-react';
-import { useAppSelector, useAppDispatch } from '../../hooks/redux';
-import { selectTheme, setTheme } from '../../store/slices/uiSlice';
-import { selectFilteredExpenses, resetToSampleData } from '../../store/slices/expensesSlice';
-import { exportToCSV } from '../../utils';
+import { useAppSelector, useAppDispatch } from '../hooks/redux';
+import { selectTheme, setTheme } from '../store/slices/uiSlice';
+import { selectFilteredExpenses, resetToSampleData } from '../store/slices/expensesSlice';
+import { exportToCSV } from '../utils';
 import { format } from 'date-fns';
-import { cn } from '../../utils';
+import { cn } from '../utils';
+import { useNavigate } from 'react-router-dom';
 
 export default function Settings() {
   const dispatch = useAppDispatch();
   const theme = useAppSelector(selectTheme);
   const expenses = useAppSelector(selectFilteredExpenses);
+  const navigate = useNavigate()
+  const {user}= useAppSelector((state)=>state.user)
 
   const handleExport = () => {
     exportToCSV(
@@ -36,18 +39,18 @@ export default function Settings() {
             A
           </div>
           <div>
-            <p className="font-bold text-text text-lg">Alex Johnson</p>
-            <p className="text-sm text-muted">alex.johnson@example.com</p>
-            <span className="inline-flex items-center gap-1 mt-1 text-xs font-medium text-accent bg-accent/10 px-2 py-0.5 rounded-full">
+            <p className="font-bold text-text text-lg">{user?.full_name}</p>
+            <p className="text-sm text-muted">{user?.email}</p>
+            {/* <span className="inline-flex items-center gap-1 mt-1 text-xs font-medium text-accent bg-accent/10 px-2 py-0.5 rounded-full">
               ✨ Pro Plan
-            </span>
+            </span> */}
           </div>
         </div>
         <div className="grid grid-cols-2 gap-3">
           <button className="py-2 px-4 rounded-xl text-sm font-medium border border-border text-muted hover:text-text hover:bg-hover transition-colors">
             Edit Profile
           </button>
-          <button className="py-2 px-4 rounded-xl text-sm font-medium border border-border text-muted hover:text-text hover:bg-hover transition-colors">
+          <button onClick={()=>navigate("/send-otp")} className="py-2 px-4 rounded-xl text-sm font-medium border border-border text-muted hover:text-text hover:bg-hover transition-colors">
             Change Password
           </button>
         </div>

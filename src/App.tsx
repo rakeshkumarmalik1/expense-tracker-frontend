@@ -1,53 +1,120 @@
 // src/App.tsx
-import React, { useEffect } from 'react';
-import { useAppSelector } from './hooks/redux';
-import { selectTheme, selectActiveView, selectSidebarOpen } from './store/slices/uiSlice';
-import Sidebar from './components/layout/Sidebar';
-import Header from './components/layout/Header';
-import Dashboard from './components/dashboard/Dashboard';
-import ExpensesList from './components/expenses/ExpensesList';
-import Analytics from './components/dashboard/Analytics';
-import Budgets from './components/dashboard/Budgets';
-import Settings from './components/dashboard/Settings';
-import ExpenseModal from './components/expenses/ExpenseModal';
-import DeleteModal from './components/expenses/DeleteModal';
-import { cn } from './utils';
+
+import React, { useEffect } from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "./hooks/redux";
+import { selectHydrating, selectIsAuthenticated, setHydrate, viewProfile } from "./store/slices/userSlices/user.slice";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Dashboard from "./pages/Dashboard";
+import ExpensesList from "./pages/expenses/ExpensesList";
+import Analytics from "./pages/Analytics/Analytics";
+import Budgets from "./pages/Budgets/Budgets";
+import Settings from "./pages/Settings";
+import AppLayout from "./components/layout/AppLayout";
+import Profile from "./pages/Profile";
+import ForgotPasswordEmail from "./pages/auth/ForgotPswdPage";
+import VerifyPasswordOtp from "./pages/auth/VerifyOtpPage";
+import ResetPassword from "./pages/auth/ResetPasswordPage";
+import AddExpensePage from "./pages/expenses/AddExpenses";
+// import AppLayout from "./components/layout/AppLayout";
 
 export default function App() {
-  const theme = useAppSelector(selectTheme);
-  const activeView = useAppSelector(selectActiveView);
-  const sidebarOpen = useAppSelector(selectSidebarOpen);
+  const dispatch = useAppDispatch();
+
+  const isAuthenticated = useAppSelector(
+    selectIsAuthenticated
+  );
+
+  const hydrating = useAppSelector(
+    selectHydrating
+  );
 
   useEffect(() => {
-    document.documentElement.classList.toggle('dark', theme === 'dark');
-  }, [theme]);
+    dispatch(viewProfile());
+  }, [dispatch]);
 
-  const views: Record<string, React.ReactNode> = {
-    dashboard: <Dashboard />,
-    expenses: <ExpensesList />,
-    analytics: <Analytics />,
-    budgets: <Budgets />,
-    settings: <Settings />,
-  };
+  if (hydrating) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        Loading...
+      </div>
+    );
+  }
 
   return (
-    <div className={cn('min-h-screen bg-background text-text font-sans', theme)}>
-      <Sidebar />
-      <div
-        className={cn(
-          'transition-all duration-300 min-h-screen flex flex-col',
-          sidebarOpen ? 'lg:pl-64' : 'lg:pl-20'
+    <BrowserRouter>
+      <Routes>
+
+        <Route path="/" element={<Navigate to={isAuthenticated
+          ? "/dashboard"
+          : "/login"}
+          replace
+        />
+        }
+        />
+
+        <Route
+          path="/login"
+          element={
+            isAuthenticated
+              ? <Navigate to="/dashboard" replace />
+              : <Login />
+          }
+        />
+
+        <Route
+          path="/register"
+          element={
+            isAuthenticated
+              ? <Navigate to="/dashboard" replace />
+              : <Register />
+          }
+        />
+
+        {isAuthenticated && (
+          <Route element={<AppLayout />}>
+            <Route
+              path="/dashboard"
+              element={<Dashboard />}
+            />
+
+            <Route path="/expenses" element={<ExpensesList />}/>
+            <Route path="/add-expense" element={<AddExpensePage />}/>
+
+            <Route
+              path="/analytics"
+              element={<Analytics />}
+            />
+            <Route path="/view-profile" element={<Profile />} />
+            <Route
+              path="/budgets"
+              element={<Budgets />}
+            />
+
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/settings" element={<Settings />} />
+          </Route>
         )}
-      >
-        <Header />
-        <main className="flex-1 p-4 md:p-6">
-          <div className="max-w-7xl mx-auto">
-            {views[activeView]}
-          </div>
-        </main>
-      </div>
-      <ExpenseModal />
-      <DeleteModal />
-    </div>
+
+        <Route
+          path="*"
+          element={
+            <Navigate
+              to={
+                isAuthenticated
+                  ? "/dashboard"
+                  : "/login"
+              }
+              replace
+            />
+          }
+        />
+        <Route path="/send-otp" element={<ForgotPasswordEmail />} />
+        <Route path="/verify-otp" element={<VerifyPasswordOtp />} />
+        <Route path="/reset-new-password" element={<ResetPassword />} />
+
+      </Routes>
+    </BrowserRouter>
   );
 }

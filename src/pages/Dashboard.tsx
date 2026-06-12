@@ -1,7 +1,7 @@
 // src/components/dashboard/Dashboard.tsx
 import React from 'react';
 import { DollarSign, ShoppingCart, Calendar, TrendingUp, Plus } from 'lucide-react';
-import { useAppSelector, useAppDispatch } from '../../hooks/redux';
+import { useAppSelector, useAppDispatch } from '../hooks/redux';
 import {
   selectTodayTotal,
   selectMonthTotal,
@@ -9,15 +9,15 @@ import {
   selectDailyTotals,
   selectTodayExpenses,
   selectMonthExpenses,
-} from '../../store/slices/expensesSlice';
-import { openModal } from '../../store/slices/uiSlice';
-import StatCard from '../ui/StatCard';
-import SpendingBarChart from '../charts/SpendingBarChart';
-import CategoryPieChart from '../charts/CategoryPieChart';
-import MonthlyLineChart from '../charts/MonthlyLineChart';
-import ExpenseRow from '../expenses/ExpenseRow';
-import { formatCurrency, formatDate } from '../../utils';
-import { CATEGORY_COLORS } from '../../types';
+} from '../store/slices/expensesSlice';
+import { openModal } from '../store/slices/uiSlice';
+import StatCard from '../components/ui/StatCard';
+import SpendingBarChart from '../components/charts/SpendingBarChart';
+import CategoryPieChart from '../components/charts/CategoryPieChart';
+import MonthlyLineChart from '../components/charts/MonthlyLineChart';
+import ExpenseRow from './expenses/ExpenseRow';
+import { formatCurrency, formatDate } from '../utils';
+import { CATEGORY_COLORS } from '../types';
 
 export default function Dashboard() {
   const dispatch = useAppDispatch();

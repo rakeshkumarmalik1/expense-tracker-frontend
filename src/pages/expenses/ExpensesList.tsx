@@ -7,6 +7,7 @@ import { openModal } from '../../store/slices/uiSlice';
 import { CATEGORIES, CATEGORY_ICONS, Category } from '../../types';
 import ExpenseRow from './ExpenseRow';
 import { formatCurrency, formatDate, cn } from '../../utils';
+import { useNavigate } from 'react-router-dom';
 
 export default function ExpensesList() {
   const dispatch = useAppDispatch();
@@ -15,7 +16,7 @@ export default function ExpensesList() {
   const [selectedCats, setSelectedCats] = useState<Category[]>([]);
   const [showFilters, setShowFilters] = useState(false);
   const [expandedDays, setExpandedDays] = useState<Record<string, boolean>>({});
-
+  const navigate = useNavigate();
   const applyFilters = (s: string, cats: Category[]) => {
     dispatch(setFilters({ search: s || undefined, categories: cats.length ? cats : undefined }));
   };
@@ -76,7 +77,7 @@ export default function ExpensesList() {
             )}
           </button>
           <button
-            onClick={() => dispatch(openModal({ type: 'add' }))}
+            onClick={() => navigate("/add-expense")}
             className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold bg-accent text-white hover:bg-accent-hover transition-all shadow-md shadow-accent/25"
           >
             <Plus size={15} />

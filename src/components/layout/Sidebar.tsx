@@ -1,35 +1,30 @@
 // src/components/layout/Sidebar.tsx
 import React from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
-  LayoutDashboard,
-  Receipt,
-  BarChart3,
-  Wallet,
-  Settings,
-  X,
-  TrendingUp,
-  Sparkles,
+  LayoutDashboard, Receipt, BarChart3,
+  Wallet, Settings, X, TrendingUp, Sparkles,
 } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
-import { selectActiveView, setActiveView, toggleSidebar, selectSidebarOpen } from '../../store/slices/uiSlice';
+import { toggleSidebar, selectSidebarOpen } from '../../store/slices/uiSlice';
 import { cn } from '../../utils';
 
 const NAV_ITEMS = [
-  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { id: 'expenses', label: 'Expenses', icon: Receipt },
-  { id: 'analytics', label: 'Analytics', icon: BarChart3 },
-  { id: 'budgets', label: 'Budgets', icon: Wallet },
-  { id: 'settings', label: 'Settings', icon: Settings },
+  { id: 'dashboard',  label: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
+  { id: 'expenses',   label: 'Expenses',  icon: Receipt,         path: '/expenses'  },
+  { id: 'analytics',  label: 'Analytics', icon: BarChart3,       path: '/analytics' },
+  { id: 'budgets',    label: 'Budgets',   icon: Wallet,          path: '/budgets'   },
+  { id: 'settings',   label: 'Settings',  icon: Settings,        path: '/settings'  },
 ] as const;
 
 export default function Sidebar() {
   const dispatch = useAppDispatch();
-  const activeView = useAppSelector(selectActiveView);
   const sidebarOpen = useAppSelector(selectSidebarOpen);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   return (
     <>
-      {/* Mobile overlay */}
       {sidebarOpen && (
         <div
           className="fixed inset-0 z-20 bg-black/50 lg:hidden"
@@ -51,7 +46,7 @@ export default function Sidebar() {
             <div className="w-9 h-9 rounded-xl bg-accent flex items-center justify-center flex-shrink-0 shadow-lg">
               <TrendingUp size={18} className="text-white" />
             </div>
-            {(sidebarOpen) && (
+            {sidebarOpen && (
               <div>
                 <p className="font-bold text-sm text-sidebar-text tracking-tight">SpendWise</p>
                 <p className="text-xs text-sidebar-muted">Pro Dashboard</p>
@@ -68,13 +63,13 @@ export default function Sidebar() {
 
         {/* Nav */}
         <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-          {NAV_ITEMS.map(({ id, label, icon: Icon }) => {
-            const active = activeView === id;
+          {NAV_ITEMS.map(({ id, label, icon: Icon, path }) => {
+            const active = location.pathname === path;
             return (
               <button
                 key={id}
                 onClick={() => {
-                  dispatch(setActiveView(id));
+                  navigate(path);
                   if (window.innerWidth < 1024) dispatch(toggleSidebar());
                 }}
                 className={cn(
